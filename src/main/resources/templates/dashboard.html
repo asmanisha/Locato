@@ -1,153 +1,683 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Locato - Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <style>
-    body {
-        background: #f0f2f5;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locato - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    .navbar-brand {
-        font-weight: 700;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        font-size: 1.5rem;
-    }
+        .navbar-custom {
+            background: white !important;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            padding: 12px 0;
+        }
 
-    .welcome-card {
-        background: white;
-        border-radius: 20px;
-        padding: 30px;
-        margin-top: 30px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-    .venue-card {
-        background: white;
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        transition: all 0.3s;
-        cursor: pointer;
-    }
+        .navbar-brand i {
+            -webkit-text-fill-color: #667eea;
+            margin-right: 8px;
+        }
 
-    .venue-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-    .category-badge {
-        padding: 5px 15px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
 
-    .badge-hotel { background: #dbeafe; color: #2563eb; }
-    .badge-cafeteria { background: #d1fae5; color: #059669; }
-    .badge-theatre { background: #fce7f3; color: #db2777; }
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
 
-    .btn-logout {
-        background: #ef4444;
-        color: white;
-        border: none;
-        padding: 8px 20px;
-        border-radius: 10px;
-    }
+        .user-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #1a1a2e;
+        }
 
-    .btn-logout:hover {
-        background: #dc2626;
-        color: white;
-    }
-  </style>
+        .user-location {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .btn-logout {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        .welcome-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 35px;
+            margin-top: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .welcome-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .welcome-title span {
+            color: #667eea;
+        }
+
+        .welcome-subtitle {
+            color: #6c757d;
+            font-size: 1rem;
+        }
+
+        .location-switcher {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .location-switcher label {
+            font-weight: 600;
+            color: #4a4a6a;
+            margin: 0;
+        }
+
+        .location-select {
+            padding: 8px 20px;
+            border-radius: 12px;
+            border: 2px solid #e8e8e8;
+            background: white;
+            font-weight: 600;
+            color: #1a1a2e;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 150px;
+        }
+
+        .location-select:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .category-filters {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 25px 0 30px;
+        }
+
+        .category-btn {
+            padding: 20px;
+            border-radius: 16px;
+            border: 3px solid #e8e8e8;
+            background: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            color: #4a4a6a;
+            text-align: center;
+        }
+
+        .category-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .category-btn i {
+            display: block;
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .category-btn .badge {
+            background: #e8e8e8;
+            color: #4a4a6a;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+
+        .category-btn.active {
+            border-color: #667eea;
+            background: #f8f9ff;
+            color: #667eea;
+        }
+
+        .category-btn.active .badge {
+            background: #667eea;
+            color: white;
+        }
+
+        .venue-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 10px;
+        }
+
+        .venue-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .venue-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .venue-image {
+            height: 160px;
+            background: linear-gradient(135deg, #e8ecf1 0%, #d5dae3 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #8892a8;
+            position: relative;
+        }
+
+        .venue-image .category-icon {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .venue-body {
+            padding: 20px;
+        }
+
+        .venue-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 5px;
+        }
+
+        .venue-description {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .venue-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .venue-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .venue-location {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+
+        .cart-floating {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            position: relative;
+            z-index: 1000;
+            text-decoration: none;
+        }
+
+        .cart-floating:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        .explore-btn {
+            background: none;
+            border: none;
+            color: #667eea;
+            font-weight: 600;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .explore-btn i {
+            transition: transform 0.3s;
+        }
+
+        .venue-card:hover .explore-btn i {
+            transform: translateX(5px);
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 50px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 50px;
+            background: white;
+            border-radius: 16px;
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            color: #d5dae3;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-section {
+                padding: 20px;
+            }
+
+            .welcome-title {
+                font-size: 1.3rem;
+            }
+
+            .venue-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .category-filters {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .category-btn {
+                padding: 15px 10px;
+                font-size: 0.9rem;
+            }
+
+            .category-btn i {
+                font-size: 1.5rem;
+            }
+
+            .location-switcher {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+            }
+
+            .location-select {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
 <!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-  <div class="container">
-    <a class="navbar-brand" href="#">
-      <i class="fas fa-map-pin" style="color: #667eea;"></i> Locato
-    </a>
-    <div class="ms-auto d-flex align-items-center gap-3">
-                <span class="text-muted">
-                    <i class="fas fa-user"></i>
-                    <span th:text="${userName}">User</span>
-                </span>
-      <span class="badge bg-primary">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span th:text="${userLocation}">Location</span>
-                </span>
-      <a href="/logout" class="btn btn-logout btn-sm">
-        <i class="fas fa-sign-out-alt"></i> Logout
-      </a>
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container">
+        <a class="navbar-brand" href="/dashboard">
+            <i class="fas fa-map-pin"></i> Locato
+        </a>
+
+        <div class="ms-auto">
+            <div class="user-info">
+                <div class="user-avatar" th:text="${#strings.substring(userName, 0, 1).toUpperCase()}">U</div>
+                <div class="user-details d-none d-sm-block">
+                    <span class="user-name" th:text="${userName}">User</span>
+                    <span class="user-location">
+                            <i class="fas fa-map-marker-alt" style="color: #667eea;"></i>
+                            <span th:text="${userLocation}">Location</span>
+                        </span>
+                </div>
+                <a href="/logout" class="btn btn-logout btn-sm">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
 </nav>
 
 <!-- Main Content -->
 <div class="container">
-  <!-- Welcome Section -->
-  <div class="welcome-card">
-    <h2>
-      <i class="fas fa-hand-wave" style="color: #667eea;"></i>
-      Welcome back, <span th:text="${userName}">User</span>!
-    </h2>
-    <p class="text-muted">
-      <i class="fas fa-map-marker-alt" style="color: #764ba2;"></i>
-      You are currently in <strong th:text="${userLocation}">Location</strong>
-    </p>
-    <p class="text-muted">
-      <i class="fas fa-info-circle"></i>
-      Dashboard is ready! We'll add more features in the next steps.
-    </p>
-  </div>
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <div class="row align-items-center">
+            <div class="col-md-7">
+                <h1 class="welcome-title">
+                    <i class="fas fa-hand-wave" style="color: #667eea;"></i>
+                    Welcome back, <span th:text="${userName}">User</span>!
+                </h1>
+                <p class="welcome-subtitle">
+                    <i class="fas fa-map-pin" style="color: #764ba2;"></i>
+                    Discover and book venues in
+                    <strong th:text="${userLocation}">Location</strong>
+                </p>
+            </div>
+            <div class="col-md-5 mt-3 mt-md-0">
+                <div class="location-switcher">
+                    <label for="locationSelect">
+                        <i class="fas fa-map-marker-alt" style="color: #667eea;"></i> Change Location:
+                    </label>
+                    <select class="location-select" id="locationSelect">
+                        <option value="Vadalur" th:selected="${userLocation == 'Vadalur'}">📍 Vadalur</option>
+                        <option value="Neyveli" th:selected="${userLocation == 'Neyveli'}">📍 Neyveli</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <!-- Venues Section -->
-  <h4 class="mt-4 mb-3">
-    <i class="fas fa-store"></i> Venues in <span th:text="${userLocation}">Location</span>
-  </h4>
+    <!-- Category Filters -->
+    <div class="category-filters">
+        <button class="category-btn active" id="btnAll" onclick="filterVenues('ALL')">
+            <i class="fas fa-th-large"></i>
+            All Venues
+            <span class="badge" th:text="${#lists.size(allVenues)}">0</span>
+        </button>
+        <button class="category-btn" id="btnHotel" onclick="filterVenues('HOTEL')">
+            <i class="fas fa-hotel"></i>
+            Hotels
+            <span class="badge" th:text="${hotelCount}">0</span>
+        </button>
+        <button class="category-btn" id="btnCafeteria" onclick="filterVenues('CAFETERIA')">
+            <i class="fas fa-mug-saucer"></i>
+            Cafeterias
+            <span class="badge" th:text="${cafeteriaCount}">0</span>
+        </button>
+        <button class="category-btn" id="btnTheatre" onclick="filterVenues('THEATRE')">
+            <i class="fas fa-film"></i>
+            Theatres
+            <span class="badge" th:text="${theatreCount}">0</span>
+        </button>
+    </div>
 
-  <div class="row">
-    <div th:each="venue : ${venues}" class="col-md-4">
-      <div class="venue-card">
-        <div class="d-flex justify-content-between align-items-start">
-          <h5 th:text="${venue.name}">Venue Name</h5>
-          <span class="category-badge"
-                th:classappend="${venue.category.name() == 'HOTEL' ? 'badge-hotel' :
-                                            venue.category.name() == 'CAFETERIA' ? 'badge-cafeteria' : 'badge-theatre'}"
-                th:text="${venue.category}">
+    <!-- Venue Grid -->
+    <div id="venueContainer">
+        <div class="venue-grid" id="venueGrid">
+            <div th:each="venue : ${venues}" class="venue-card"
+                 onclick="viewVenueDetails(${venue.id})">
+                <div class="venue-image"
+                     th:style="'background: linear-gradient(135deg, ' +
+                                   (venue.category.name() == 'HOTEL' ? '#dbeafe, #93c5fd' :
+                                    venue.category.name() == 'CAFETERIA' ? '#d1fae5, #6ee7b7' :
+                                    '#fce7f3, #f9a8d4') + ');'">
+                    <i class="fas"
+                       th:classappend="${venue.category.name() == 'HOTEL' ? 'fa-hotel' :
+                                           venue.category.name() == 'CAFETERIA' ? 'fa-utensils' :
+                                           'fa-film'}"></i>
+                    <span class="category-icon"
+                          th:style="'background: ' +
+                                       (venue.category.name() == 'HOTEL' ? '#2563eb' :
+                                        venue.category.name() == 'CAFETERIA' ? '#059669' :
+                                        '#db2777') + ';'"
+                          th:text="${venue.category}">
                             Category
                         </span>
-        </div>
-        <p class="text-muted small" th:text="${venue.description}">Description</p>
-        <div class="d-flex justify-content-between align-items-center">
-                        <span class="text-warning">
+                </div>
+                <div class="venue-body">
+                    <h5 class="venue-name" th:text="${venue.name}">Venue Name</h5>
+                    <p class="venue-description" th:text="${venue.description}">Description</p>
+                    <div class="venue-meta">
+                        <div class="venue-rating">
                             <i class="fas fa-star"></i>
                             <span th:text="${venue.rating != null ? venue.rating : '0.0'}">0.0</span>
-                        </span>
-          <span class="text-muted small">
+                        </div>
+                        <div class="venue-location">
                             <i class="fas fa-map-marker-alt"></i>
                             <span th:text="${venue.location}">Location</span>
-                        </span>
+                        </div>
+                    </div>
+                    <button class="explore-btn">
+                        Explore <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Coming Soon -->
-  <div class="alert alert-info mt-4">
-    <i class="fas fa-rocket"></i>
-    <strong>Coming Soon:</strong> Category filters, venue details, menu, cart, and payment!
-  </div>
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 text-muted">Loading venues...</p>
+    </div>
+
+    <!-- No Results -->
+    <div id="noResults" style="display: none;">
+        <div class="no-results">
+            <i class="fas fa-store-slash"></i>
+            <h4>No Venues Found</h4>
+            <p class="text-muted">Try selecting a different category or location</p>
+        </div>
+    </div>
 </div>
+
+<!-- Floating Cart Button -->
+<a href="/cart" class="cart-floating">
+    <i class="fas fa-shopping-cart"></i>
+    <span class="cart-count" id="cartCount">0</span>
+</a>
+
+<!-- JavaScript -->
+<script>
+    var currentCategory = 'ALL';
+    var currentLocation = document.getElementById('locationSelect').value;
+
+    function filterVenues(category) {
+        currentCategory = category;
+
+        var buttons = document.querySelectorAll('.category-btn');
+        buttons.forEach(function(btn) {
+            btn.classList.remove('active');
+        });
+
+        var activeBtn = document.getElementById('btn' + category);
+        if (category === 'ALL') {
+            activeBtn = document.getElementById('btnAll');
+        }
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+        }
+
+        loadVenues(currentLocation, category);
+    }
+
+    function changeLocation() {
+        var select = document.getElementById('locationSelect');
+        currentLocation = select.value;
+        loadVenues(currentLocation, currentCategory);
+    }
+
+    function loadVenues(location, category) {
+        var loading = document.getElementById('loadingSpinner');
+        var grid = document.getElementById('venueGrid');
+        var noResults = document.getElementById('noResults');
+
+        loading.style.display = 'block';
+        grid.style.display = 'none';
+        noResults.style.display = 'none';
+
+        var url = '/api/venues/filter?location=' + location;
+        if (category && category !== 'ALL') {
+            url += '&category=' + category;
+        }
+
+        fetch(url)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(venues) {
+                loading.style.display = 'none';
+
+                if (venues.length === 0) {
+                    noResults.style.display = 'block';
+                    grid.style.display = 'none';
+                    return;
+                }
+
+                grid.style.display = 'grid';
+                noResults.style.display = 'none';
+
+                grid.innerHTML = '';
+
+                venues.forEach(function(venue) {
+                    var colors = {
+                        'HOTEL': { bg: 'linear-gradient(135deg, #dbeafe, #93c5fd)', color: '#2563eb', icon: 'fa-hotel' },
+                        'CAFETERIA': { bg: 'linear-gradient(135deg, #d1fae5, #6ee7b7)', color: '#059669', icon: 'fa-utensils' },
+                        'THEATRE': { bg: 'linear-gradient(135deg, #fce7f3, #f9a8d4)', color: '#db2777', icon: 'fa-film' }
+                    };
+
+                    var c = colors[venue.category] || colors['HOTEL'];
+
+                    var card = document.createElement('div');
+                    card.className = 'venue-card';
+                    card.onclick = function() {
+                        window.location.href = '/venue/' + venue.id;
+                    };
+                    card.innerHTML =
+                        '<div class="venue-image" style="background: ' + c.bg + ';">' +
+                            '<i class="fas ' + c.icon + '"></i>' +
+                            '<span class="category-icon" style="background: ' + c.color + ';">' + venue.category + '</span>' +
+                        '</div>' +
+                        '<div class="venue-body">' +
+                            '<h5 class="venue-name">' + venue.name + '</h5>' +
+                            '<p class="venue-description">' + (venue.description || 'No description available') + '</p>' +
+                            '<div class="venue-meta">' +
+                                '<div class="venue-rating">' +
+                                    '<i class="fas fa-star"></i>' +
+                                    '<span>' + (venue.rating || '0.0') + '</span>' +
+                                '</div>' +
+                                '<div class="venue-location">' +
+                                    '<i class="fas fa-map-marker-alt"></i>' +
+                                    '<span>' + venue.location + '</span>' +
+                                '</div>' +
+                            '</div>' +
+                            '<button class="explore-btn">Explore <i class="fas fa-arrow-right"></i></button>' +
+                        '</div>';
+                    grid.appendChild(card);
+                });
+            })
+            .catch(function(error) {
+                console.error('Error loading venues:', error);
+                loading.style.display = 'none';
+                noResults.style.display = 'block';
+            });
+    }
+
+    function updateCartCount() {
+        fetch('/cart/count')
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(count) {
+                document.getElementById('cartCount').textContent = count || 0;
+            })
+            .catch(function(error) {
+                console.error('Error fetching cart count:', error);
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var select = document.getElementById('locationSelect');
+        select.addEventListener('change', changeLocation);
+        updateCartCount();
+    });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
